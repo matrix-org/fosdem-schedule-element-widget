@@ -31,14 +31,11 @@ const buildDocker = async () => {
     execChildProcess('git', 'rev-parse --short HEAD').then((ref) => {
       return ref.replace(/^(.*?)[\r\n]*$/, '$1'); // remove line breaks from output if present
     }).then((vcsRef) => {
-      if (!process.env.GITHUB_TOKEN) {
-        return reject(chalk.redBright('missing GITHUB_TOKEN environment variable!'));
-      }
 
       var version = pkg.version || 'latest'; // fallback to 'latest' if no version is set in package.json
       var date = new Date().toISOString(); // get current date in ISO format
-      var name = pkg.name.replace(/^(?:@\w*\/)?(.*)$/, '$1'); // remove organization prefix from package name if present
-      var organization = pkg.name.replace(/^(?:@(\w*)\/)?.*$/, '$1') || 'nordeck'; // get organization from package name
+      var name = 'fosdem-schedule-element-widget';
+      var organization = 'matrixdotorg';
 
       var getArgument = (name) => {
         var argIndex = process.argv.indexOf(name);
