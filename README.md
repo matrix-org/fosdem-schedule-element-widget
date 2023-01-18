@@ -38,9 +38,13 @@ yarn add [package-name] --dev
 
 ### Local Testing
 
-To test the widget locally you can add it to a room using `/addwidget https://localhost:3000?theme=$theme&room=M.misc`. This will only work in a chrome instance that is started with `--allow-insecure-localhost --disable-site-isolation-trials --disable-web-security` flags.
+To test the widget locally you can add it to a room using `/addwidget https://localhost:3000?theme=$theme&room=M.misc`. This will only work in either:
 
-> WARNING: Do not use this chrome instance to browse the web!
+- a Chrome instance that is started with `--allow-insecure-localhost --disable-site-isolation-trials --disable-web-security` flags (seems broken as at 2023); or
+- a Firefox-based browser instance with the [CORS Everywhere] extension set to the 'green' mode.
+  - To create a new development profile for installing this extension, start Firefox with `firefox -p` and choose the option to create a new profile. Give it a clear name so that the profile is not accidentally used for web browsing! (You can also start with `firefox -p profilename`.)
+
+> WARNING: Do not use this Chrome instance — or the Firefox CORS Everywhere extension — to browse the web! CORS is a security feature and disabling it would allow websites to impersonate you on other websites.
 
 ### IntelliJ and Webstorm
 
