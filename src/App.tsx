@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
 import LoginPage from './components/account/LoginPage';
 import LoginProvider from './components/common/LoginProvider';
 import SchedulePanel from './components/schedule/SchedulePanel';
+import { updateTodayLoop } from './reducer/schedulesSlice';
 
 const Container = styled.div`
   text-align: center;
@@ -19,6 +21,12 @@ const Container = styled.div`
 `;
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(updateTodayLoop);
+  });
+
   return (
     <Container>
       <LoginProvider>
