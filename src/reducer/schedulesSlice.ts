@@ -180,7 +180,7 @@ export async function updateTodayLoop(dispatch: any): Promise<void> {
 
     // Sleep.
     console.log('Waiting for new day in ', timeToWaitMilliseconds / 1000);
-    await new Promise(resolve => {
+    await new Promise((resolve) => {
       window.setTimeout(resolve, timeToWaitMilliseconds);
     });
     console.log('New day, refreshing');
