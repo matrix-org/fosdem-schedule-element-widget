@@ -12,20 +12,25 @@ export interface IScheduleEvent {
   room?: string
 }
 
+type DateString = string;
+type DateToEventMap = { [dateString: string]: IScheduleEvent[] };
+
 interface ScheduleState {
-  list: Array<IScheduleEvent>;
+  lists: DateToEventMap;
   start: string,
   end: string,
   isLoading: boolean;
   error: string | null;
+  today: DateString | null;
 }
 
 const initialState: ScheduleState = {
   end: new Date().toISOString(),
   error: null,
   isLoading: true,
-  list: [],
-  start: new Date().toISOString()
+  lists: {},
+  start: new Date().toISOString(),
+  today: null
 };
 
 const getISODate = (date: Date = new Date()) => {
@@ -105,11 +110,14 @@ export const scheduleSlice = createSlice({
     setIsLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
     },
-    setSchedule: (state, action: PayloadAction<{ events: Array<IScheduleEvent>, start: string, end: string }>) => {
-      state.list = action.payload.events;
+    setSchedule: (state, action: PayloadAction<{ events: DateToEventMap, start: string, end: string }>) => {
+      state.lists = action.payload.events;
       state.start = action.payload.start;
       state.end = action.payload.end;
       state.error = null;
+    },
+    setToday: (state, action: PayloadAction<DateString>) => {
+      state.today = action.payload;
     }
   }
 });
@@ -125,12 +133,20 @@ export const getScheduleAsync = debounceAction((roomName: string): AppThunk => {
         const dom = parser.parseFromString(xmlStr, 'application/xml');
         const confStart = dom.querySelector('conference start')?.textContent;
         const confEnd = dom.querySelector('conference end')?.textContent;
-        const { start, end, current } = parseConferenceDates(confStart, confEnd);
-        const currentDate = getISODate(current);
-        const events = dom.querySelectorAll(`day[date='${currentDate}'] room${roomName ? `[name='${roomName}']` : ''} event`);
+        const { start, end } = parseConferenceDates(confStart, confEnd);
+
+        const events: DateToEventMap = {};
+
+        // Build up a map of events by day
+        for (const dayElement of dom.querySelectorAll('day').values()) {
+          const dateOfDay = dayElement.attributes.getNamedItem('date')?.nodeValue as string;
+          const eventsOfDay = mapEvents(dayElement.querySelectorAll(`room${roomName ? `[name='${roomName}']` : ''} event`), dateOfDay);
+          events[dateOfDay] = eventsOfDay;
+        }
+
         dispatch(scheduleSlice.actions.setSchedule({
           end: end.toISOString(),
-          events: mapEvents(events, currentDate),
+          events,
           start: start.toISOString()
         }));
       } else {
@@ -143,8 +159,68 @@ export const getScheduleAsync = debounceAction((roomName: string): AppThunk => {
   };
 }, 400);
 
-export const selectSchedule = (state: RootState) => state.schedule.list;
+
+/**
+ * Loop which updates today as the date changes.
+ */
+export async function updateTodayLoop(dispatch: any): Promise<void> {
+  let lastToday: DateString | null = null;
+  while (true) {
+    const now = new Date();
+    const newToday = getISODate(now);
+    if (newToday !== lastToday) {
+      dispatch(scheduleSlice.actions.setToday(newToday));
+      lastToday = newToday;
+    }
+
+    const nextDay = new Date(`${newToday}T23:59:59+01:00`);
+
+    // Clamp to at least 30 seconds to ensure that we don't have any hot loop if time doesn't progress as expected for some reason.
+    const timeToWaitMilliseconds = Math.max(nextDay.getTime() - now.getTime(), 0) + 30_000;
+
+    // Sleep.
+    console.log('Waiting for new day in ', timeToWaitMilliseconds / 1000);
+    await new Promise(resolve => {
+      window.setTimeout(resolve, timeToWaitMilliseconds);
+    });
+    console.log('New day, refreshing');
+  }
+}
+
+
+// Returns today's schedule, or if today isn't a conference day, clamps it to the nearest end of the schedule (start or end).
+export const selectSchedule = (state: RootState): IScheduleEvent[] => {
+  // If there are events today, that's easy.
+  const today = state.schedule.today || '';
+  const todaysSchedule = state.schedule.lists[today];
+  if (todaysSchedule !== undefined) {
+    return todaysSchedule;
+  }
+
+  // If no schedule for today, get nearest end of the conference
+
+  const daysInSchedule = Object.keys(state.schedule.lists);
+  daysInSchedule.sort();
+
+  if (daysInSchedule.length <= 0) {
+    // No schedule? Then no events for today.
+    return [];
+  }
+
+  if (today < daysInSchedule[0]) {
+    return state.schedule.lists[daysInSchedule[0]]!;
+  }
+
+  if (today > daysInSchedule[daysInSchedule.length - 1]) {
+    return state.schedule.lists[daysInSchedule[daysInSchedule.length - 1]]!;
+  }
+
+  // Shouldn't happen in practice.
+  console.warn('Today has no schedule, but not before start or after end! Showing no events');
+  return [];
+};
 export const selectIsLoading = (state: RootState) => state.schedule.isLoading;
 export const selectError = (state: RootState) => state.schedule.error;
+
 
 export default scheduleSlice.reducer;
