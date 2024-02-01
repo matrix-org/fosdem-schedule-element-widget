@@ -101,7 +101,7 @@ const buildDocker = async () => {
           console.log(`::set-output name=container::${name}`)
 
           if (pushTarget) {
-            execChildProcess('docker', `push ${pushTarget || organization}/${name}`, false).then(() => {
+            execChildProcess('docker', `push ${tag}`, false).then(() => {
               resolve(chalk.greenBright(`docker image build and pushed successfully (${tag})!`));
             }).catch((err) => {
               console.error(chalk.redBright(`unable to push docker image (${tag})!`));
