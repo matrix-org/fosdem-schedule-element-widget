@@ -126,7 +126,7 @@ export const getScheduleAsync = debounceAction((roomName: string): AppThunk => {
   return async (dispatch: any) => {
     dispatch(scheduleSlice.actions.setIsLoading(true));
     try {
-      const response = await fetch((process.env.NODE_ENV === 'development') ? 'https://fosdem.org/2023/schedule/xml' : '/schedule');
+      const response = await fetch((process.env.NODE_ENV === 'development') ? 'https://fosdem.org/2024/schedule/xml' : '/schedule');
       if (response.ok) {
         const xmlStr = await response.text();
         const parser = new DOMParser();
