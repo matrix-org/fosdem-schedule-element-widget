@@ -20,7 +20,7 @@ const EventView = ({ event }: IEventViewProps) => {
   const [url, setUrl] = useState<string | undefined>();
 
   useEffect(() => {
-    setUrl(`https://fosdem.org/2024/schedule/event/${event.slug}`);
+    setUrl(`https://fosdem.org/2025/schedule/event/${event.slug}`);
   }, [event]);
 
   const openEvent = useCallback(() => {
