@@ -40,7 +40,7 @@ const apiProxy = createProxyMiddleware('/schedule', {
   pathRewrite: {
     '^/schedule': ''
   },
-  target: 'https://fosdem.org/2025/schedule/xml'
+  target: 'https://fosdem.org/2026/schedule/xml'
 });
 app.use('/schedule', apiProxy);
 
