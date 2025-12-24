@@ -11,7 +11,7 @@
     "express": "^4.17.1",
     "express-sslify": "^1.2.0",
     "helmet": "^4.1.1",
-    "http-proxy-middleware": "^1.0.6",
+    "http-proxy-middleware": "^2.0.7",
     "husky": "^5.0.8",
     "is-ci": "^2.0.0",
     "mustache": "^4.0.1"
