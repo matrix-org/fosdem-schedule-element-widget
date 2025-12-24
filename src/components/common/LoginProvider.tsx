@@ -38,7 +38,10 @@ export const useLogin = () => {
 /**
  *  A react component that provides access to the current user login
  */
-export const LoginConsumer = ({ children }: { children: (login: LoginResponse | {}) => React.ReactNode }) => {
+export const LoginConsumer = ({ children }: { 
+  // eslint-disable-next-line no-unused-vars
+  children: (_login: LoginResponse | {}) => React.ReactNode 
+}) => {
   return (
     <LoginContext.Consumer>
       {(context) => {

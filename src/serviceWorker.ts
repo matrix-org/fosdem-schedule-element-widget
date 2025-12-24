@@ -21,8 +21,10 @@ const isLocalhost = Boolean(
 );
 
 type Config = {
-  onSuccess?: (registration: ServiceWorkerRegistration) => void;
-  onUpdate?: (registration: ServiceWorkerRegistration) => void;
+  // eslint-disable-next-line no-unused-vars
+  onSuccess?: (_registration: ServiceWorkerRegistration) => void;
+  // eslint-disable-next-line no-unused-vars
+  onUpdate?: (_registration: ServiceWorkerRegistration) => void;
 };
 
 export function register(config?: Config) {

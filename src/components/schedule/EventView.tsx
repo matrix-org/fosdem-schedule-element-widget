@@ -9,14 +9,10 @@ interface IEventViewProps {
   event: IScheduleEvent,
 }
 
-enum Actions {
-  None = 'none',
-  ShareUrl = 'share_url',
-  ShowDetails = 'show_details'
-}
+type Action = 'none' | 'share_url' | 'show_details';
 
 const EventView = ({ event }: IEventViewProps) => {
-  const [action, setAction] = useState(Actions.None);
+  const [action, setAction] = useState<Action>('none');
   const [url, setUrl] = useState<string | undefined>();
 
   useEffect(() => {
@@ -40,7 +36,7 @@ const EventView = ({ event }: IEventViewProps) => {
     if (navigator.share) {
       navigator.share(data).catch(console.error);
     } else {
-      setAction(Actions.ShareUrl);
+      setAction('share_url');
     }
   }, [url, event]);
 
@@ -84,14 +80,14 @@ const EventView = ({ event }: IEventViewProps) => {
           size="tiny"
         >
           <Button
-            active={action === Actions.ShareUrl}
+            active={action === 'share_url'}
             aria-label="share event link"
             circular
             icon="alternate share"
             onClick={openShareModal}
           />
           <Button
-            active={action === Actions.ShowDetails}
+            active={action === 'show_details'}
             aria-label="show details"
             circular
             icon="info"
@@ -104,8 +100,8 @@ const EventView = ({ event }: IEventViewProps) => {
         />
         {url ?
           <ShareUrlModal
-            onClose={() => setAction(Actions.None)}
-            open={action === Actions.ShareUrl}
+            onClose={() => setAction('none')}
+            open={action === 'share_url'}
             url={url}
           />
           : null
