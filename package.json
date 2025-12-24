@@ -17,7 +17,7 @@
     "mustache": "^4.0.1"
   },
   "devDependencies": {
-    "@babel/core": "7.12.3",
+    "@babel/core": "^7.24.7",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.11",
     "@reduxjs/toolkit": "^1.2.5",
     "@svgr/webpack": "5.4.0",
