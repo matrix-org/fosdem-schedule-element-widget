@@ -90,11 +90,12 @@ checkBrowsers(paths.appPath, isInteractive)
       port,
       paths.publicUrlOrPath.slice(0, -1)
     );
+    let devServer;
     const devSocket = {
       warnings: warnings =>
-        devServer.sockWrite(devServer.sockets, 'warnings', warnings),
+        devServer.sendMessage(devServer.webSocketServer.clients, 'warnings', warnings),
       errors: errors =>
-        devServer.sockWrite(devServer.sockets, 'errors', errors),
+        devServer.sendMessage(devServer.webSocketServer.clients, 'errors', errors),
     };
     // Create a webpack compiler that is configured with custom messages.
     const compiler = createCompiler({
@@ -119,12 +120,9 @@ checkBrowsers(paths.appPath, isInteractive)
       proxyConfig,
       urls.lanUrlForConfig
     );
-    const devServer = new WebpackDevServer(compiler, serverConfig);
+    devServer = new WebpackDevServer(serverConfig, compiler);
     // Launch WebpackDevServer.
-    devServer.listen(port, HOST, err => {
-      if (err) {
-        return console.log(err);
-      }
+    devServer.start().then(() => {
       if (isInteractive) {
         clearConsole();
       }
@@ -139,11 +137,13 @@ checkBrowsers(paths.appPath, isInteractive)
 
       console.log(chalk.cyan('Starting the development server...\n'));
       // openBrowser(urls.localUrlForBrowser);
+    }).catch((err) => {
+      console.log(err);
     });
 
     ['SIGINT', 'SIGTERM'].forEach(function (sig) {
       process.on(sig, function () {
-        devServer.close();
+        devServer.stop();
         process.exit();
       });
     });
@@ -151,7 +151,7 @@ checkBrowsers(paths.appPath, isInteractive)
     if (process.env.CI !== 'true') {
       // Gracefully exit when stdin ends
       process.stdin.on('end', function () {
-        devServer.close();
+        devServer.stop();
         process.exit();
       });
     }
