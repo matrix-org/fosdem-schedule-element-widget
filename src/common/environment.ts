@@ -25,4 +25,6 @@ const handler = {
  * Reads environment variables starting with `REACT_APP_` from a global variable at runtime and falls back to `process.env` build time variables.
  * @module environment
  */
-export default new Proxy(getWindowEnvironment(), handler);
+const proxy = new Proxy(getWindowEnvironment(), handler);
+
+export default proxy;

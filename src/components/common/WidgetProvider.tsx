@@ -114,7 +114,10 @@ export const useWidget = () => {
 /**
  *  A react component that provides access to the Matrix Widget API
  */
-export const WidgetConsumer = ({ children }: { children: (widget: WidgetContextProps) => React.ReactNode }) => {
+export const WidgetConsumer = ({ children }: {
+  // eslint-disable-next-line no-unused-vars
+  children: (_widget: WidgetContextProps) => React.ReactNode
+}) => {
   return (
     <WidgetContext.Consumer>
       {(context) => {

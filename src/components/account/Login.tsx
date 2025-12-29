@@ -4,7 +4,8 @@ import environment from '../../common/environment';
 import { LoginFlowInitResponse, LoginResponse } from '../../common/synapseTypes';
 import CenteredSegment from '../common/CenteredSegment';
 export interface LoginProps {
-  onLoggedIn: (user: LoginResponse) => void;
+  // eslint-disable-next-line no-unused-vars
+  onLoggedIn: (_user: LoginResponse) => void;
 }
 
 const SynapseBaseUrl = environment.REACT_APP_HOME_SERVER_URL || 'https://matrix.org';
@@ -45,6 +46,9 @@ const Login = ({ onLoggedIn }: LoginProps) => {
             'password': data.get('password'),
             'type': 'm.login.password'
           }),
+          headers: {
+            'Content-Type': 'application/json'
+          },
           method: 'POST'
         });
         if (response.ok) {

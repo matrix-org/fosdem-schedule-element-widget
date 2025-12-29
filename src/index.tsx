@@ -29,7 +29,8 @@ declare global {
     url?: string;
   }
   interface Navigator {
-    share: (data?: ShareData) => Promise<void>;
+    // eslint-disable-next-line no-unused-vars
+    share: (_data?: ShareData) => Promise<void>;
   }
 }
 
