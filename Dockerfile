@@ -1,4 +1,4 @@
-FROM node:12-alpine AS build
+FROM node:24-alpine AS build
 
 ARG GITHUB_TOKEN
 ARG CI
@@ -15,7 +15,7 @@ WORKDIR /out
 RUN cp -r /app/node_modules /app/build /app/server.js .
 
 
-FROM node:12-alpine
+FROM node:24-alpine
 
 ENV NODE_ENV=production
 ARG BUILD_DATE
