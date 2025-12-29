@@ -46,6 +46,9 @@ const Login = ({ onLoggedIn }: LoginProps) => {
             'password': data.get('password'),
             'type': 'm.login.password'
           }),
+          headers: {
+            'Content-Type': 'application/json'
+          },
           method: 'POST'
         });
         if (response.ok) {
