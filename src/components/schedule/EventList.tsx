@@ -18,7 +18,7 @@ interface IGroupHeaderProps {
   index: number;
 }
 
-const getRoomName = () => {
+const getRoomSlug = () => {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get('room');
 };
@@ -40,10 +40,11 @@ const EventList = () => {
   const error = useSelector(selectError);
   const schedule = useSelector(selectSchedule);
   const dispatch = useDispatch();
+  // Room slug
   const [room, setRoom] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
-    const selectedRoom = getRoomName();
+    const selectedRoom = getRoomSlug();
     setRoom(selectedRoom);
     dispatch(getScheduleAsync(selectedRoom));
   }, [dispatch]);
