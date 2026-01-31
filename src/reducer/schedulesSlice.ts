@@ -122,7 +122,7 @@ export const scheduleSlice = createSlice({
   }
 });
 
-export const getScheduleAsync = debounceAction((roomName: string): AppThunk => {
+export const getScheduleAsync = debounceAction((roomSlug: string): AppThunk => {
   return async (dispatch: any) => {
     dispatch(scheduleSlice.actions.setIsLoading(true));
     try {
@@ -140,7 +140,7 @@ export const getScheduleAsync = debounceAction((roomName: string): AppThunk => {
         // Build up a map of events by day
         for (const dayElement of dom.querySelectorAll('day').values()) {
           const dateOfDay = dayElement.attributes.getNamedItem('date')?.nodeValue as string;
-          const eventsOfDay = mapEvents(dayElement.querySelectorAll(`room${roomName ? `[name='${roomName}']` : ''} event`), dateOfDay);
+          const eventsOfDay = mapEvents(dayElement.querySelectorAll(`room${roomSlug ? `[slug='${roomSlug}']` : ''} event`), dateOfDay);
           events[dateOfDay] = eventsOfDay;
         }
 
